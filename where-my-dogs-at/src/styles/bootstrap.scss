@@ -1,0 +1,117 @@
+// 1. Import Bootstrap’s core (in correct order)
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/maps'; // Ensure maps are imported to define $theme-colors-rgb
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/utilities'; // Import utilities after maps
+
+// 2. Enable responsive font sizes (if needed)
+$enable-responsive-font-sizes: true;
+
+// 3. Customize utilities AFTER importing utilities
+$utilities: map-merge(
+  $utilities,
+  (
+    'margin':
+      map-merge(
+        map-get($utilities, 'margin'),
+        (
+          responsive: true,
+        )
+      ),
+    'padding':
+      map-merge(
+        map-get($utilities, 'padding'),
+        (
+          responsive: true,
+        )
+      ),
+    'width':
+      map-merge(
+        map-get($utilities, 'width'),
+        (
+          responsive: true,
+        )
+      ),
+    'height':
+      map-merge(
+        map-get($utilities, 'height'),
+        (
+          responsive: true,
+        )
+      ),
+    'gap':
+      map-merge(
+        map-get($utilities, 'gap'),
+        (
+          responsive: true,
+        )
+      ),
+    'display':
+      map-merge(
+        map-get($utilities, 'display'),
+        (
+          responsive: true,
+        )
+      ),
+    'border':
+      map-merge(
+        map-get($utilities, 'border'),
+        (
+          responsive: true,
+        )
+      ),
+    'text-align':
+      map-merge(
+        map-get($utilities, 'text-align'),
+        (
+          responsive: true,
+        )
+      ),
+    'flex':
+      map-merge(
+        map-get($utilities, 'flex'),
+        (
+          responsive: true,
+        )
+      ),
+    'order':
+      map-merge(
+        map-get($utilities, 'order'),
+        (
+          responsive: true,
+        )
+      ),
+    'overflow':
+      map-merge(
+        map-get($utilities, 'overflow'),
+        (
+          responsive: true,
+        )
+      ),
+    'position':
+      map-merge(
+        map-get($utilities, 'position'),
+        (
+          responsive: true,
+        )
+      ),
+    'object-fit':
+      map-merge(
+        map-get($utilities, 'object-fit'),
+        (
+          responsive: true,
+        )
+      ),
+    'visibility':
+      map-merge(
+        map-get($utilities, 'visibility'),
+        (
+          responsive: true,
+        )
+      ),
+  )
+);
+
+// 4. Import Bootstrap’s main styles (last step)
+@import 'bootstrap/scss/bootstrap';
