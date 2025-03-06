@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
+import { Button, Nav, Navbar } from 'react-bootstrap';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,55 +34,26 @@ const NavBar: FC<NavBarProps> = () => {
   }
 
   return (
-    <nav
-      className="navbar navbar-expand-lg bg-body-tertiary"
-      data-testid="NavBar"
+    <Navbar
+      fixed="top"
+      expand="lg"
+      className="bg-body-tertiary shadow-sm d-flex align-items-center justify-content-between"
     >
-      <div className="container-fluid">
-        <Link to="/" className="navbar-brand">
-          Where My Dogs At?
-        </Link>
-        {userName && (
-          <div>
-            <span>{userName}</span>
-            <Button onClick={logout} className="ms-2">
-              Logout
-            </Button>
+      <Navbar.Brand href="/" className="ms-3">
+        Where My Dogs At?
+      </Navbar.Brand>
+
+      {userName && (
+        <div className="d-flex align-items-center">
+          <div className="border-end">
+            <span className="pe-2">Welcome, {userName}</span>
           </div>
-        )}
-        {/* <button
-        className="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarText"
-        aria-controls="navbarText"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
-      <div className="collapse navbar-collapse" id="navbarText">
-        <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-          <li className="nav-item">
-            <a className="nav-link active" aria-current="page" href="#">
-              Home
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="#">
-              Features
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="#">
-              Pricing
-            </a>
-          </li>
-        </ul>
-        <span className="navbar-text">Navbar text with an inline element</span>
-      </div> */}
-      </div>
-    </nav>
+          <Button onClick={logout} className="ms-2 me-3 btn-light">
+            Logout
+          </Button>
+        </div>
+      )}
+    </Navbar>
   );
 };
 
