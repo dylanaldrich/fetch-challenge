@@ -1,20 +1,56 @@
 import React, { FC } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useNavigate } from 'react-router-dom';
+
 import '../../App.scss';
 import './NavBar.scss';
-import { Link } from 'react-router-dom';
+import { userState } from '../../recoil/atoms';
+import AuthModel from '../../models/AuthModel';
 
 interface NavBarProps {}
 
-const NavBar: FC<NavBarProps> = () => (
-  <nav
-    className="navbar navbar-expand-lg bg-body-tertiary"
-    data-testid="NavBar"
-  >
-    <div className="container-fluid">
-      <Link to="/" className="navbar-brand">
-        Where My Dogs At?
-      </Link>
-      {/* <button
+const NavBar: FC<NavBarProps> = () => {
+  const userName = useRecoilValue(userState);
+  const setUser = useSetRecoilState(userState);
+  const navigate = useNavigate();
+
+  function logout() {
+    if (userName) {
+      AuthModel.logout()
+        .then((success: boolean) => {
+          if (success) {
+            setUser(null);
+            navigate('/');
+            // redirect to home page
+          }
+        })
+        .catch((error) => {
+          alert(error.message);
+          console.error(error);
+        });
+    }
+  }
+
+  return (
+    <nav
+      className="navbar navbar-expand-lg bg-body-tertiary"
+      data-testid="NavBar"
+    >
+      <div className="container-fluid">
+        <Link to="/" className="navbar-brand">
+          Where My Dogs At?
+        </Link>
+        {userName && (
+          <div>
+            <span>{userName}</span>
+            <Button onClick={logout} className="ms-2">
+              Logout
+            </Button>
+          </div>
+        )}
+        {/* <button
         className="navbar-toggler"
         type="button"
         data-bs-toggle="collapse"
@@ -45,8 +81,9 @@ const NavBar: FC<NavBarProps> = () => (
         </ul>
         <span className="navbar-text">Navbar text with an inline element</span>
       </div> */}
-    </div>
-  </nav>
-);
+      </div>
+    </nav>
+  );
+};
 
 export default NavBar;
