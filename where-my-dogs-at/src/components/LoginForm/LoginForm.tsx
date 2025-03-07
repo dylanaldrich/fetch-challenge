@@ -1,24 +1,22 @@
-import React, { FC, FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { useSetRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 
 import './LoginForm.scss';
 import AuthModel from '../../models/AuthModel';
-import { userState } from '../../recoil/atoms';
-
-interface LoginFormProps {}
+import { user } from '../../jotai/atoms';
 
 interface LoginResponse {
-  userName: string;
+  name: string;
 }
 
-const LoginForm: FC<LoginFormProps> = () => {
+const LoginForm = () => {
   const [error, setError] = useState('');
-  const setUser = useSetRecoilState(userState);
+  const [, setUser] = useAtom(user);
   const navigate = useNavigate();
 
-  function login(e: FormEvent<HTMLFormElement>) {
+  function login(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get('name')?.toString().trim();
@@ -27,8 +25,8 @@ const LoginForm: FC<LoginFormProps> = () => {
     if (name && email) {
       AuthModel.login({ name, email })
         .then((response: LoginResponse) => {
-          if (response.userName) {
-            setUser(response.userName);
+          if (response.name) {
+            setUser({ name });
             navigate('/index');
           }
         })
@@ -41,7 +39,7 @@ const LoginForm: FC<LoginFormProps> = () => {
     }
   }
 
-  function resetError() {
+  function resetError(): void {
     setError('');
   }
 

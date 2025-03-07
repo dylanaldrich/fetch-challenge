@@ -25,7 +25,7 @@ class AuthModel {
       throw new Error('Login attempt failed. Please try again.');
     }
 
-    return { userName: userData.name };
+    return { name: userData.name };
   };
 
   static logout = async () => {

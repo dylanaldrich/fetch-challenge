@@ -1,16 +1,13 @@
-/* imports */
-import React from 'react';
-import { useRecoilValue } from 'recoil';
 import { Navigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 
 import '../App.scss';
-import { userState } from '../recoil/atoms';
+import { loggedIn } from '../jotai/atoms';
 
-/* Home Page Component */
 const Index = () => {
-  const loggedIn = !!useRecoilValue(userState);
+  const [isLoggedIn] = useAtom(loggedIn);
 
-  if (!loggedIn) {
+  if (!isLoggedIn) {
     return <Navigate to="/" />;
   }
 

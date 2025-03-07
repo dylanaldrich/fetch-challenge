@@ -1,23 +1,18 @@
-import React, { FC } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Nav, Navbar } from 'react-bootstrap';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { Button, Navbar } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 import '../../App.scss';
 import './NavBar.scss';
-import { userState } from '../../recoil/atoms';
 import AuthModel from '../../models/AuthModel';
+import { useAtom } from 'jotai';
+import { user } from '../../jotai/atoms';
 
-interface NavBarProps {}
-
-const NavBar: FC<NavBarProps> = () => {
-  const userName = useRecoilValue(userState);
-  const setUser = useSetRecoilState(userState);
+const NavBar = () => {
+  const [activeUser, setUser] = useAtom(user);
   const navigate = useNavigate();
 
   function logout() {
-    if (userName) {
+    if (activeUser) {
       AuthModel.logout()
         .then((success: boolean) => {
           if (success) {
@@ -43,10 +38,10 @@ const NavBar: FC<NavBarProps> = () => {
         Where My Dogs At?
       </Navbar.Brand>
 
-      {userName && (
+      {activeUser?.name && (
         <div className="d-flex align-items-center">
           <div className="border-end">
-            <span className="pe-2">Welcome, {userName}</span>
+            <span className="pe-2">Welcome, {activeUser.name}</span>
           </div>
           <Button onClick={logout} className="ms-2 me-3 btn-light">
             Logout
