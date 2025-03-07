@@ -35,13 +35,17 @@ const NavBar = () => {
       className="bg-body-tertiary shadow-sm d-flex align-items-center justify-content-between"
     >
       <Navbar.Brand href="/" className="ms-3">
-        Where My Dogs At?
+        <span className="d-none d-md-block">Where My Dogs At?</span>
+        <span className="d-block d-md-none">WMDA?</span>
       </Navbar.Brand>
 
       {activeUser?.name && (
         <div className="d-flex align-items-center">
           <div className="border-end">
-            <span className="pe-2">Welcome, {activeUser.name}</span>
+            <span className="pe-2">
+              <span className="d-none d-md-inline">Welcome, </span>
+              {activeUser.name}
+            </span>
           </div>
           <Button onClick={logout} className="ms-2 me-3 btn-light">
             Logout

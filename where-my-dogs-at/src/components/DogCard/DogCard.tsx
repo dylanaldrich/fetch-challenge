@@ -1,5 +1,8 @@
 import { FC } from 'react';
-import { Card, Image } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 
 import './DogCard.scss';
 import { Dog } from '../../models/DogsModel';
@@ -23,22 +26,26 @@ const DogCard: FC<DogCardProps> = ({ dog, isSelected, toggleSelection }) => (
     </div>
     <Card.Body>
       <Card.Title>{dog.name}</Card.Title>
-      <Card.Text className="h6 ms-3">
-        {dog.age === 0
-          ? '< 1 year old'
-          : dog.age === 1
-          ? '1 year old'
-          : `${dog.age} years old`}
+      <Card.Text>
+        <ul>
+          <li>
+            {dog.age === 0
+              ? '< 1 year old'
+              : dog.age === 1
+              ? '1 year old'
+              : `${dog.age} years old`}
+          </li>
+          <li>{dog.breed}</li>
+        </ul>
       </Card.Text>
-      <Card.Text className="mb-0 ms-3">{dog.breed}</Card.Text>
-      <Image
+      <FontAwesomeIcon
+        icon={isSelected ? solidHeart : regularHeart}
+        size="lg"
         className={
-          'position-absolute end-0 me-3 _heart ' +
-          (isSelected ? 'd-block _red' : '_grey')
+          'position-absolute end-0 me-3 _heart text-danger ' +
+          (isSelected ? 'd-block' : '')
         }
-        height={25}
-        src={isSelected ? 'heart-solid.svg' : 'heart-regular.svg'}
-      />
+      ></FontAwesomeIcon>
     </Card.Body>
   </Card>
 );
