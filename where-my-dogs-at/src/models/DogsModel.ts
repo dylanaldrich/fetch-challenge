@@ -1,45 +1,108 @@
 /* Backend server URL */
-const URL = 'https://frontend-take-home-service.fetch.com';
+const baseUrl = 'https://frontend-take-home-service.fetch.com';
 
-export interface UserData {
+export interface DogSearchParams {
+  breeds?: string[];
+  zipCodes?: string[];
+  ageMin?: number;
+  ageMax?: number;
+  from?: string;
+  sort?: string;
+  next?: string;
+}
+
+export interface DogSearchResponse {
+  next: string;
+  resultIds: string[];
+  total: number;
+}
+
+export interface Dog {
+  img: string;
   name: string;
-  email: string;
+  age: number;
+  breed: string;
+  zip_code: string;
+  id: string;
 }
 
-interface AuthResponse {
-  ok: boolean;
-}
+class DogsModel {
+  static searchDogs = async (
+    searchParams?: DogSearchParams,
+  ): Promise<DogSearchResponse> => {
+    const urlSearchParams = searchParams
+      ? this.getUrlSearchParams({
+          ...searchParams,
+          sort: searchParams.sort || 'breed:asc',
+        })
+      : new URLSearchParams();
+    const path = searchParams?.next || '/dogs/search?';
+    const response = await fetch(baseUrl + path + urlSearchParams, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-class AuthModel {
-  static login = async (userData: UserData) => {
-    const response: AuthResponse = await fetch(`${URL}/auth/login`, {
+    if (response.status !== 200) {
+      throw new Error('Login attempt failed. Please try again.');
+    }
+
+    const data = await response.json();
+
+    return data;
+  };
+
+  static getDogs = async (dogIds: string[]): Promise<Dog[]> => {
+    const response = await fetch(`${baseUrl}/dogs`, {
       method: 'POST',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(userData),
+      body: JSON.stringify(dogIds),
     });
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       throw new Error('Login attempt failed. Please try again.');
     }
 
-    return { userName: userData.name };
+    const data = await response.json();
+
+    return data;
   };
 
-  static logout = async () => {
-    const response = await fetch(`${URL}/auth/logout`, {
-      method: 'POST',
-      credentials: 'include',
-    });
+  static populateDogs = async (): Promise<Dog[]> => {
+    const { resultIds } = await this.searchDogs();
 
-    if (!response.ok) {
-      throw new Error('Logout unsuccessful. Please try again.');
+    if (!resultIds) {
+      throw new Error('Sorry, something went wrong. Try again later.');
     }
 
-    return true;
+    const dogs = await this.getDogs(resultIds);
+
+    if (!dogs) {
+      throw new Error('Sorry, something went wrong. Try again later.');
+    }
+
+    return dogs;
+  };
+
+  static getUrlSearchParams = (
+    searchParams: DogSearchParams,
+  ): URLSearchParams => {
+    const params = new URLSearchParams();
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((item) => params.append(key, item));
+      } else {
+        params.append(key, String(value));
+      }
+    });
+
+    return params;
   };
 }
 
-export default AuthModel;
+export default DogsModel;

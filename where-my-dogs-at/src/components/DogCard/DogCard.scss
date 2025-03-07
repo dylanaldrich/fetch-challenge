@@ -1,0 +1,27 @@
+.DogCard {
+  ._hovered {
+    display: none;
+    bottom: 0rem;
+  }
+  transition: linear 0.1s;
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+    ._hovered {
+      display: block;
+    }
+  }
+
+  ._img-container {
+    height: 200px;
+    width: auto;
+    overflow: hidden;
+  }
+
+  ._dog-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
