@@ -35,7 +35,7 @@ const DogsGrid: FC<DogsGridProps> = (props) => {
   return (
     <Container className="mt-3 mb-5 position-relative">
       <Row className="DogsGrid g-3" data-testid="DogsGrid">
-        {props.dogs.map((dog, index) => {
+        {props.dogs.map((dog) => {
           return (
             <Col xs={'auto'} sm={6} md={4} lg={3} key={dog.id}>
               <DogCard

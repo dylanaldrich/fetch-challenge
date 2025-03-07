@@ -7,6 +7,7 @@ import './Index.scss';
 import { loggedIn } from '../jotai/atoms';
 import DogsModel, { Dog } from '../models/DogsModel';
 import DogsGrid from '../components/DogsGrid/DogsGrid';
+import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
 
 const Index = () => {
   const [isLoggedIn] = useAtom(loggedIn);
@@ -37,7 +38,10 @@ const Index = () => {
       {dogs.length > 0 && !error ? (
         <DogsGrid dogs={dogs}></DogsGrid>
       ) : (
-        <p>Loading doggos...</p>
+        <div className="d-flex flex-column flex-1 justify-content-center align-items-center">
+          <LoadingSpinner></LoadingSpinner>
+          <h4 className="mt-4">Using dog whistle...</h4>
+        </div>
       )}
     </div>
   );
