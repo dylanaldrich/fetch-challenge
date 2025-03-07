@@ -22,16 +22,15 @@ const DogCard: FC<DogCardProps> = ({ dog, isSelected, toggleSelection }) => (
       <Card.Img variant="top" src={dog.img} className="_dog-img" />
     </div>
     <Card.Body>
-      <Card.Title>
-        {dog.name} (
+      <Card.Title>{dog.name}</Card.Title>
+      <Card.Text className="h6 ms-3">
         {dog.age === 0
-          ? '<1 year old'
+          ? '< 1 year old'
           : dog.age === 1
           ? '1 year old'
           : `${dog.age} years old`}
-        )
-      </Card.Title>
-      <Card.Text className="mb-0">{dog.breed}</Card.Text>
+      </Card.Text>
+      <Card.Text className="mb-0 ms-3">{dog.breed}</Card.Text>
       <Image
         className={
           'position-absolute end-0 me-3 _heart ' +

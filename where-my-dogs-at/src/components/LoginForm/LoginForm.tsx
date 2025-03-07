@@ -27,7 +27,7 @@ const LoginForm = () => {
         .then((response: LoginResponse) => {
           if (response.name) {
             setUser({ name });
-            navigate('/index');
+            navigate('/dogs/search');
           }
         })
         .catch((error: { message: string }) => {

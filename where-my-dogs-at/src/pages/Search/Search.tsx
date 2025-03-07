@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
 
-import '../App.scss';
-import './Index.scss';
-import { loggedIn } from '../jotai/atoms';
-import DogsModel, { Dog } from '../models/DogsModel';
-import DogsGrid from '../components/DogsGrid/DogsGrid';
-import LoadingSpinner from '../components/LoadingSpinner/LoadingSpinner';
+import '../../App.scss';
+import './Search.scss';
+import { loggedIn } from '../../jotai/atoms';
+import DogsModel, { Dog } from '../../models/DogsModel';
+import DogsGrid from '../../components/DogsGrid/DogsGrid';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 
-const Index = () => {
+const Search = () => {
   const [isLoggedIn] = useAtom(loggedIn);
   const [error, setError] = useState('');
   const [dogs, setDogs] = useState<Dog[]>([]);
@@ -35,16 +35,18 @@ const Index = () => {
 
   return (
     <div className="_index-page d-flex flex-column flex-grow-1">
-      {dogs.length > 0 && !error ? (
-        <DogsGrid dogs={dogs}></DogsGrid>
-      ) : (
-        <div className="d-flex flex-column flex-1 justify-content-center align-items-center">
+      {!error && dogs.length > 0 && <DogsGrid dogs={dogs}></DogsGrid>}
+
+      {!error && dogs.length === 0 && (
+        <div className="d-flex flex-column flex-grow-1 justify-content-center align-items-center">
           <LoadingSpinner></LoadingSpinner>
-          <h4 className="mt-4">Using dog whistle...</h4>
+          <h4 className="mt-4 fst-italic">*Blows dog whistle*</h4>
         </div>
       )}
+
+      {error && <h4 className="text-danger">{error}</h4>}
     </div>
   );
 };
 
-export default Index;
+export default Search;

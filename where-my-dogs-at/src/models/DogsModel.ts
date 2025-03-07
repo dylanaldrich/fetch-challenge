@@ -65,12 +65,37 @@ class DogsModel {
     });
 
     if (response.status !== 200) {
-      throw new Error('Login attempt failed. Please try again.');
+      throw new Error(
+        "Couldn't fetch dogs. Ha! See what I did there? Please try again.",
+      );
     }
 
     const data = await response.json();
 
     return data;
+  };
+
+  static getMatch = async (dogIds: string[]): Promise<Dog> => {
+    const matchResponse = await fetch(`${baseUrl}/dogs/match`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(dogIds),
+    });
+
+    if (matchResponse.status !== 200) {
+      throw new Error(
+        "Couldn't fetch your match. Ha! See what I did there? Please try again.",
+      );
+    }
+
+    const { match: matchId } = await matchResponse.json();
+
+    const matches = await this.getDogs([matchId]);
+
+    return matches[0];
   };
 
   static populateDogs = async (): Promise<Dog[]> => {

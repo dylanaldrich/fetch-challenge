@@ -1,19 +1,16 @@
 /* imports */
 import { Routes, Route } from 'react-router-dom';
 
-import Home from '../pages/Home';
-import Index from '../pages/Index';
+import Home from '../pages/Home/Home';
+import Search from '../pages/Search/Search';
 
 /* Routes */
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* {!loggedIn && <Route path="*" element={<Home />} />} */}
       <Route path="/" element={<Home />} />
-      <Route path="/index" element={<Index />} />
-      {/* <Route path="/about" element={<Home />} />
-      <Route path="/recipe/:id" element={<Home />} /> */}
       {/* Auth Required Routes */}
+      <Route path="/dogs/search" element={<Search />} />
     </Routes>
   );
 };
