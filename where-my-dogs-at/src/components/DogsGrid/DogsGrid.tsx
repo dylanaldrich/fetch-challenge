@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Button, Card, Col, Container, Image, Row } from 'react-bootstrap';
 
 import './DogsGrid.scss';
 import { Dog } from '../../models/DogsModel';
@@ -10,37 +10,60 @@ interface DogsGridProps {
 }
 
 const DogsGrid: FC<DogsGridProps> = (props) => {
-  const [selectedDogIds, setSelectedDogIds] = useState<Set<string> | null>(
-    null,
-  );
+  const [selectedDogIds, setSelectedDogIds] = useState<Set<string>>(new Set());
 
   function toggleSelection(id: string): void {
-    if (!selectedDogIds) {
-      const newSet = new Set<string>();
-      newSet.add(id);
-      setSelectedDogIds(newSet);
-      return;
-    }
+    setSelectedDogIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  }
 
-    if (selectedDogIds.has(id)) {
-      selectedDogIds.delete(id);
-    } else {
-      selectedDogIds.add(id);
-    }
-    setSelectedDogIds(selectedDogIds);
+  function getMatch(): void {
+    console.log('finding match...');
+  }
+
+  function deselectAll(): void {
+    setSelectedDogIds(new Set());
   }
 
   return (
-    <Container className="mt-3 mb-5">
+    <Container className="mt-3 mb-5 position-relative">
       <Row className="DogsGrid g-3" data-testid="DogsGrid">
-        {props.dogs.map((dog) => {
+        {props.dogs.map((dog, index) => {
           return (
             <Col xs={'auto'} sm={6} md={4} lg={3} key={dog.id}>
-              <DogCard dog={dog} trackSelections={toggleSelection}></DogCard>
+              <DogCard
+                dog={dog}
+                isSelected={selectedDogIds.has(dog.id)}
+                toggleSelection={toggleSelection}
+              ></DogCard>
             </Col>
           );
         })}
       </Row>
+
+      {selectedDogIds.size > 0 && (
+        <Card className="w-50 border-primary shadow _selects-card">
+          <Card.Body className="d-flex align-items-center justify-content-between">
+            <Card.Text className="mb-0">
+              {selectedDogIds.size} dog{selectedDogIds.size === 1 ? '' : 's'}{' '}
+              selected. Ready to find your match?
+            </Card.Text>
+            <div>
+              <Button onClick={getMatch}>Match!</Button>
+              <Button onClick={deselectAll} className="btn-light ms-2">
+                <Image src="xmark-regular.svg" height={25} />
+              </Button>
+            </div>
+          </Card.Body>
+        </Card>
+      )}
     </Container>
   );
 };
