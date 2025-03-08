@@ -133,7 +133,7 @@ const Search = () => {
         </div>
       )}
 
-      {error && <h4 className="text-danger">{error}</h4>}
+      {error && <h4 className="text-danger text-center mt-5">{error}</h4>}
     </div>
   );
 };

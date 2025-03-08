@@ -1,10 +1,10 @@
 import { Button, Navbar } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useAtom } from 'jotai';
 
 import '../../App.scss';
 import './NavBar.scss';
 import AuthModel from '../../models/AuthModel';
-import { useAtom } from 'jotai';
 import { user } from '../../jotai/atoms';
 
 const NavBar = () => {
@@ -18,7 +18,6 @@ const NavBar = () => {
           if (success) {
             setUser(null);
             navigate('/');
-            // redirect to home page
           }
         })
         .catch((error) => {
