@@ -17,27 +17,23 @@ const Search = () => {
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [next, setNext] = useState<string>('');
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  function starterDogs(): void {
-    DogsModel.populateDogs()
-      .then((response) => {
-        setDogs(response.dogs);
-        setNext(response.next);
-      })
-      .catch((error) => {
-        console.error(error);
-        setError(error.message);
-      });
-  }
+  // Fetch dogs by breed
+  function fetchDogs(breeds: string[], next?: string): void {
+    if (breeds.length === 0) return;
 
-  function searchByBreeds(next?: string): void {
     DogsModel.populateDogs({
-      breeds: selectedBreeds,
+      breeds,
       next,
     })
       .then((response) => {
-        const allDogs = next ? [...dogs, ...response.dogs] : response.dogs;
-        setDogs(allDogs);
+        setDogs((prevDogs) => {
+          const combinedDogs = next
+            ? [...prevDogs, ...response.dogs]
+            : [...prevDogs, ...response.dogs];
+          return sortDogsByOrder(combinedDogs, sortOrder);
+        });
         setNext(response.next);
       })
       .catch((error) => {
@@ -46,20 +42,58 @@ const Search = () => {
       });
   }
 
-  useEffect(() => {
-    if (selectedBreeds.length > 0) {
-      setError('');
-      searchByBreeds();
-    } else {
-      starterDogs();
-    }
-  }, [selectedBreeds]);
+  // Sort dogs based on the sortOrder
+  function sortDogsByOrder(dogs: Dog[], order: 'asc' | 'desc'): Dog[] {
+    return dogs.sort((a, b) =>
+      order === 'asc'
+        ? a.breed.localeCompare(b.breed)
+        : b.breed.localeCompare(a.breed),
+    );
+  }
 
+  // Track breed changes
   useEffect(() => {
-    if (loggedIn && dogs.length === 0) {
-      starterDogs();
+    if (selectedBreeds.length === 0) return;
+
+    setError('');
+
+    // Identify added and removed breeds
+    const currentBreeds = new Set(selectedBreeds);
+    const previousBreeds = new Set(dogs.map((dog) => dog.breed));
+
+    const addedBreeds = selectedBreeds.filter(
+      (breed) => !previousBreeds.has(breed),
+    );
+    const removedBreeds = Array.from(previousBreeds).filter(
+      (breed) => !currentBreeds.has(breed),
+    );
+
+    // Fetch only new breeds
+    if (addedBreeds.length > 0) fetchDogs(addedBreeds);
+
+    // Remove dogs of deselected breeds
+    if (removedBreeds.length > 0) {
+      setDogs((prevDogs) =>
+        prevDogs.filter((dog) => currentBreeds.has(dog.breed)),
+      );
     }
-  }, [dogs.length]);
+  }, [selectedBreeds, sortOrder]);
+
+  // Auto-select first breed if no breed is selected
+  useEffect(() => {
+    if (isLoggedIn && dogs.length === 0 && selectedBreeds.length === 0) {
+      DogsModel.getBreeds()
+        .then((breeds) => {
+          if (breeds.length > 0) {
+            setSelectedBreeds([breeds[0].name]); // Auto-select first breed
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          setError(error.message);
+        });
+    }
+  }, [isLoggedIn, dogs.length, selectedBreeds.length]);
 
   if (!isLoggedIn) {
     return <Navigate to="/" />;
@@ -69,15 +103,18 @@ const Search = () => {
     <div className="_index-page d-flex flex-column flex-grow-1">
       <Container className="mt-3 mb-1">
         <div className="d-flex">
-          <SearchBar setSelectedBreeds={setSelectedBreeds}></SearchBar>
-          {/* <Button onClick={() => searchByBreeds(next)}>More dogs</Button> */}
+          <SearchBar
+            setSelectedBreeds={setSelectedBreeds}
+            setSortOrder={setSortOrder}
+          />
         </div>
       </Container>
-      {!error && dogs.length > 0 && <DogsGrid dogs={dogs}></DogsGrid>}
+
+      {!error && dogs.length > 0 && <DogsGrid dogs={dogs} />}
 
       {!error && dogs.length === 0 && (
         <div className="d-flex flex-column flex-grow-1 justify-content-center align-items-center">
-          <LoadingSpinner></LoadingSpinner>
+          <LoadingSpinner />
           <h4 className="mt-4 fst-italic">*Blows dog whistle*</h4>
         </div>
       )}

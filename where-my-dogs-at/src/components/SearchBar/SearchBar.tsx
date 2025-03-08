@@ -10,14 +10,14 @@ import DogsModel from '../../models/DogsModel';
 
 export interface SearchBarProps {
   setSelectedBreeds: Dispatch<SetStateAction<string[]>>;
+  setSortOrder: Dispatch<SetStateAction<'asc' | 'desc'>>;
 }
 
-const SearchBar: FC<SearchBarProps> = ({ setSelectedBreeds }) => {
-  const [error, setError] = useState('');
+const SearchBar: FC<SearchBarProps> = ({ setSelectedBreeds, setSortOrder }) => {
   const [breeds, setBreeds] = useState<{ name: string }[]>([]);
   const [multiSelections, setMultiSelections] = useState<Option[]>([]);
 
-  function getBreeds(): void {
+  useEffect(() => {
     DogsModel.getBreeds()
       .then((response) => {
         if (response) {
@@ -25,16 +25,9 @@ const SearchBar: FC<SearchBarProps> = ({ setSelectedBreeds }) => {
         }
       })
       .catch((error: { message: string }) => {
-        setError(error.message);
-        console.error(error);
+        console.error('Error fetching breeds:', error);
       });
-  }
-
-  useEffect(() => {
-    if (breeds.length === 0) {
-      getBreeds();
-    }
-  }, [breeds]);
+  }, []);
 
   useEffect(() => {
     const selectedBreeds = multiSelections.map((option) =>
@@ -43,11 +36,14 @@ const SearchBar: FC<SearchBarProps> = ({ setSelectedBreeds }) => {
     setSelectedBreeds(selectedBreeds);
   }, [multiSelections, setSelectedBreeds]);
 
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOrder(e.target.value as 'asc' | 'desc');
+  };
+
   return (
     <Row className="flex-grow-1">
       <Col xs={6} sm={9}>
         <Form.Group className="mt-3 d-inline">
-          {/* <Form.Label>Search by breed</Form.Label> */}
           <Typeahead
             id="basic-typeahead-multiple"
             labelKey="name"
@@ -59,9 +55,9 @@ const SearchBar: FC<SearchBarProps> = ({ setSelectedBreeds }) => {
           />
         </Form.Group>
       </Col>
+
       <Col xs={6} sm={3}>
-        <Form.Select aria-label="Default select example">
-          <option>Sort options</option>
+        <Form.Select aria-label="Sort dogs" onChange={handleSortChange}>
           <option value="asc">Breeds A-Z</option>
           <option value="desc">Breeds Z-A</option>
         </Form.Select>

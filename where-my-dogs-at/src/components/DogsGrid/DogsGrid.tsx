@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useMemo } from 'react';
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 
 import './DogsGrid.scss';
@@ -11,12 +11,18 @@ interface DogsGridProps {
   dogs: Dog[];
 }
 
-const DogsGrid: FC<DogsGridProps> = (props) => {
+const DogsGrid: FC<DogsGridProps> = ({ dogs }) => {
   const [selectedDogIds, setSelectedDogIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [match, setMatch] = useState<Dog>();
+
+  const uniqueDogs = useMemo(() => {
+    const dogMap = new Map<string, Dog>();
+    dogs.forEach((dog) => dogMap.set(dog.id, dog));
+    return Array.from(dogMap.values());
+  }, [dogs]);
 
   function toggleSelection(id: string): void {
     setSelectedDogIds((prev) => {
@@ -31,21 +37,22 @@ const DogsGrid: FC<DogsGridProps> = (props) => {
   }
 
   function getMatch(): void {
+    if (selectedDogIds.size === 0) return;
     setLoading(true);
+
     DogsModel.getMatch(Array.from(selectedDogIds))
       .then(async (response) => {
         if (response) {
           deselectAll();
-          await setMatch(response);
-          setLoading(false);
+          setMatch(response);
           setShowModal(true);
         }
       })
       .catch((error: { message: string }) => {
-        setLoading(false);
         setError(error.message);
         console.error(error);
-      });
+      })
+      .finally(() => setLoading(false));
   }
 
   function deselectAll(): void {
@@ -60,18 +67,17 @@ const DogsGrid: FC<DogsGridProps> = (props) => {
     <>
       <Container className="mt-3 mb-5">
         <Row className="DogsGrid g-3 position-relative" data-testid="DogsGrid">
-          {props.dogs.map((dog, index) => {
-            return (
-              <Col xs={12} sm={6} md={4} lg={3} key={dog.id}>
-                <span>{index + 1}</span>
-                <DogCard
-                  dog={dog}
-                  isSelected={selectedDogIds.has(dog.id)}
-                  toggleSelection={toggleSelection}
-                ></DogCard>
-              </Col>
-            );
-          })}
+          {uniqueDogs.map((dog, index) => (
+            <Col xs={12} sm={6} md={4} lg={3} key={dog.id}>
+              <span>{index + 1}</span>
+              <DogCard
+                dog={dog}
+                isSelected={selectedDogIds.has(dog.id)}
+                toggleSelection={toggleSelection}
+              />
+            </Col>
+          ))}
+
           {selectedDogIds.size > 0 && (
             <Card className="w-75 text-center text-md-start border-primary shadow _selects-card">
               <Card.Body className="d-flex flex-column flex-md-row align-items-center justify-content-between px-2 px-sm-3">
@@ -88,7 +94,7 @@ const DogsGrid: FC<DogsGridProps> = (props) => {
                     Match!
                     {loading && (
                       <span className="ms-1">
-                        <LoadingSpinner size="sm"></LoadingSpinner>
+                        <LoadingSpinner size="sm" />
                       </span>
                     )}
                   </Button>
@@ -101,12 +107,9 @@ const DogsGrid: FC<DogsGridProps> = (props) => {
           )}
         </Row>
       </Container>
+
       {match && (
-        <MatchModal
-          showModal={showModal}
-          dog={match}
-          handleHide={handleHide}
-        ></MatchModal>
+        <MatchModal showModal={showModal} dog={match} handleHide={handleHide} />
       )}
     </>
   );

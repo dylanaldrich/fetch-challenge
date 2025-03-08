@@ -26,19 +26,19 @@ const DogCard: FC<DogCardProps> = ({ dog, isSelected, toggleSelection }) => (
     </div>
     <Card.Body>
       <Card.Title>{dog.name}</Card.Title>
-      <Card.Text>
-        <ul>
-          <li>
-            {dog.age === 0
-              ? '< 1 year old'
-              : dog.age === 1
-              ? '1 year old'
-              : `${dog.age} years old`}
-          </li>
-          <li>{dog.breed}</li>
-          <li>Zip code {dog.zip_code}</li>
-        </ul>
-      </Card.Text>
+
+      <ul>
+        <li>
+          {dog.age === 0
+            ? '< 1 year old'
+            : dog.age === 1
+            ? '1 year old'
+            : `${dog.age} years old`}
+        </li>
+        <li>{dog.breed}</li>
+        <li>Zip code {dog.zip_code}</li>
+      </ul>
+
       <FontAwesomeIcon
         icon={isSelected ? solidHeart : regularHeart}
         size="lg"
