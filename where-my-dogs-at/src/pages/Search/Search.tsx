@@ -109,6 +109,11 @@ const Search = () => {
   return (
     <div className="_index-page d-flex flex-column flex-grow-1">
       <Container className="mt-3 mb-1">
+        <h1>Find Your Doggo!</h1>
+        <p>
+          Search by breed, click on cards to select your favorites, then click
+          "Match!" to be paired with your new best friend.
+        </p>
         <div className="d-flex">
           <SearchBar
             setSelectedBreeds={setSelectedBreeds}

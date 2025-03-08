@@ -40,11 +40,11 @@ const DogCard: FC<DogCardProps> = ({ dog, isSelected, toggleSelection }) => (
       </ul>
 
       <FontAwesomeIcon
-        icon={isSelected ? solidHeart : regularHeart}
+        icon={solidHeart}
         size="lg"
         className={
-          'position-absolute end-0 me-3 _heart text-danger ' +
-          (isSelected ? 'd-block' : '')
+          'position-absolute end-0 me-3 _heart ' +
+          (isSelected ? 'd-block text-danger _selected' : '')
         }
       ></FontAwesomeIcon>
     </Card.Body>

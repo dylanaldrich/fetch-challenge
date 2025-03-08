@@ -30,7 +30,7 @@ const SearchBar: FC<SearchBarProps> = ({ setSelectedBreeds, setSortOrder }) => {
   }, []);
 
   useEffect(() => {
-    const selectedBreeds = multiSelections.map((option) =>
+    const selectedBreeds: string[] = multiSelections.map((option) =>
       typeof option === 'string' ? option : option['name'],
     );
     setSelectedBreeds(selectedBreeds);

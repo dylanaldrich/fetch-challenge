@@ -1,11 +1,6 @@
 .DogCard {
   transition: linear 0.1s;
 
-  &:hover {
-    cursor: pointer;
-    transform: scale(1.05);
-  }
-
   ._img-container {
     height: 200px;
     width: auto;
@@ -20,15 +15,21 @@
 
   ._heart {
     top: 1rem;
-    &._grey {
-      filter: invert(45%) sepia(11%) saturate(379%) hue-rotate(167deg)
-        brightness(97%) contrast(87%);
-    }
+    color: var(--bs-secondary);
+    opacity: 0.6;
 
-    &._red,
-    &:hover {
-      filter: invert(28%) sepia(58%) saturate(2821%) hue-rotate(335deg)
-        brightness(90%) contrast(91%);
+    &._selected {
+      opacity: 1;
+    }
+  }
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+
+    ._heart {
+      color: var(--bs-danger);
+      opacity: 1;
     }
   }
 }

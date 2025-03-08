@@ -96,7 +96,7 @@ const DogsGrid: FC<DogsGridProps> = ({ dogs, onLoadMore }) => {
                   <FontAwesomeIcon
                     icon={faPlusCircle}
                     size="4x"
-                    className="text-primary"
+                    className="text-primary _plus-icon"
                   ></FontAwesomeIcon>
                 )}
                 {moreDogsLoading && (
