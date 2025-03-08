@@ -2,12 +2,14 @@ import { FC, useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { useAtom } from 'jotai';
 
 import './DogsGrid.scss';
 import DogsModel, { Dog } from '../../models/DogsModel';
 import DogCard from '../DogCard/DogCard';
 import MatchModal from '../MatchModal/MatchModal';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+import { favoriteDogIds } from '../../jotai/atoms';
 
 interface DogsGridProps {
   dogs: Dog[];
@@ -15,7 +17,7 @@ interface DogsGridProps {
 }
 
 const DogsGrid: FC<DogsGridProps> = ({ dogs, onLoadMore }) => {
-  const [selectedDogIds, setSelectedDogIds] = useState<Set<string>>(new Set());
+  const [selectedDogIds, setSelectedDogIds] = useAtom(favoriteDogIds);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [moreDogsLoading, setMoreDogsLoading] = useState(false);
