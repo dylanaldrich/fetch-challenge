@@ -36,6 +36,7 @@ const DogCard: FC<DogCardProps> = ({ dog, isSelected, toggleSelection }) => (
               : `${dog.age} years old`}
           </li>
           <li>{dog.breed}</li>
+          <li>Zip code {dog.zip_code}</li>
         </ul>
       </Card.Text>
       <FontAwesomeIcon

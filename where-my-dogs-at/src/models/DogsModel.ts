@@ -9,6 +9,7 @@ export interface DogSearchParams {
   from?: string;
   sort?: string;
   next?: string;
+  size?: number;
 }
 
 export interface DogSearchResponse {
@@ -52,6 +53,26 @@ class DogsModel {
     const data = await response.json();
 
     return data;
+  };
+
+  static getBreeds = async (): Promise<{ name: string }[]> => {
+    const response = await fetch(`${baseUrl}/dogs/breeds`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status !== 200) {
+      throw new Error(
+        "Couldn't fetch breeds. Ha! See what I did there? Please try again.",
+      );
+    }
+
+    const breeds = await response.json();
+
+    return breeds.map((breed: string) => ({ name: breed }));
   };
 
   static getDogs = async (dogIds: string[]): Promise<Dog[]> => {
@@ -98,8 +119,10 @@ class DogsModel {
     return matches[0];
   };
 
-  static populateDogs = async (): Promise<Dog[]> => {
-    const { resultIds } = await this.searchDogs();
+  static populateDogs = async (
+    searchParams?: DogSearchParams,
+  ): Promise<{ dogs: Dog[]; next: string }> => {
+    const { resultIds, next } = await this.searchDogs(searchParams);
 
     if (!resultIds) {
       throw new Error('Sorry, something went wrong. Try again later.');
@@ -111,7 +134,7 @@ class DogsModel {
       throw new Error('Sorry, something went wrong. Try again later.');
     }
 
-    return dogs;
+    return { dogs, next };
   };
 
   static getUrlSearchParams = (

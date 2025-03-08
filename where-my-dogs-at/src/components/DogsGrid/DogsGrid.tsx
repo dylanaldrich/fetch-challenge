@@ -60,9 +60,10 @@ const DogsGrid: FC<DogsGridProps> = (props) => {
     <>
       <Container className="mt-3 mb-5">
         <Row className="DogsGrid g-3 position-relative" data-testid="DogsGrid">
-          {props.dogs.map((dog) => {
+          {props.dogs.map((dog, index) => {
             return (
               <Col xs={12} sm={6} md={4} lg={3} key={dog.id}>
+                <span>{index + 1}</span>
                 <DogCard
                   dog={dog}
                   isSelected={selectedDogIds.has(dog.id)}
