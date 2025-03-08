@@ -1,5 +1,5 @@
 import { Button, Navbar } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import '../../App.scss';
 import './NavBar.scss';
@@ -57,11 +57,14 @@ const NavBar = () => {
                 onClick={logout}
                 className="ms-2 me-3 btn-light d-none d-lg-block"
               >
-                Logout
+                Log Out
               </Button>
-              <Button onClick={logout} className="btn-link d-block d-lg-none">
-                Logout {activeUser.name}
-              </Button>
+              <div className="d-block d-lg-none text-end me-2">
+                <p className="my-1">Logged in as: {activeUser.name}</p>
+                <a onClick={logout} className="_log-out-link">
+                  Log Out
+                </a>
+              </div>
             </div>
           </Navbar.Collapse>
         </>
