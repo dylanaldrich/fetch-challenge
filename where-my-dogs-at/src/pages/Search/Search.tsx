@@ -110,7 +110,7 @@ const Search = () => {
         </div>
       </Container>
 
-      {!error && dogs.length > 0 && <DogsGrid dogs={dogs} />}
+      {!error && dogs.length > 0 && <DogsGrid dogs={dogs} sort={sortOrder} />}
 
       {!error && dogs.length === 0 && (
         <div className="d-flex flex-column flex-grow-1 justify-content-center align-items-center">

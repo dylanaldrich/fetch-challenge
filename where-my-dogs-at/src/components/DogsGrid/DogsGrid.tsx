@@ -9,20 +9,28 @@ import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 interface DogsGridProps {
   dogs: Dog[];
+  sort: 'asc' | 'desc';
 }
 
-const DogsGrid: FC<DogsGridProps> = ({ dogs }) => {
+const DogsGrid: FC<DogsGridProps> = ({ dogs, sort }) => {
   const [selectedDogIds, setSelectedDogIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [match, setMatch] = useState<Dog>();
 
-  const uniqueDogs = useMemo(() => {
+  // Ensure unique dogs and apply sorting
+  const sortedDogs = useMemo(() => {
     const dogMap = new Map<string, Dog>();
     dogs.forEach((dog) => dogMap.set(dog.id, dog));
-    return Array.from(dogMap.values());
-  }, [dogs]);
+
+    const uniqueDogs = Array.from(dogMap.values());
+
+    return uniqueDogs.sort((a, b) => {
+      if (sort === 'asc') return a.name.localeCompare(b.name);
+      return b.name.localeCompare(a.name);
+    });
+  }, [dogs, sort]);
 
   function toggleSelection(id: string): void {
     setSelectedDogIds((prev) => {
@@ -67,7 +75,7 @@ const DogsGrid: FC<DogsGridProps> = ({ dogs }) => {
     <>
       <Container className="mt-3 mb-5">
         <Row className="DogsGrid g-3 position-relative" data-testid="DogsGrid">
-          {uniqueDogs.map((dog, index) => (
+          {sortedDogs.map((dog, index) => (
             <Col xs={12} sm={6} md={4} lg={3} key={dog.id}>
               <span>{index + 1}</span>
               <DogCard
