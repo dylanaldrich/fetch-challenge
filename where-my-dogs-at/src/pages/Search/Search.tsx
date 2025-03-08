@@ -19,7 +19,6 @@ const Search = () => {
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  // Fetch dogs by breed
   function fetchDogs(breeds: string[], next?: string): void {
     if (breeds.length === 0) return;
 
@@ -29,10 +28,9 @@ const Search = () => {
     })
       .then((response) => {
         setDogs((prevDogs) => {
-          const combinedDogs = next
-            ? [...prevDogs, ...response.dogs]
-            : [...prevDogs, ...response.dogs];
-          return sortDogsByOrder(combinedDogs, sortOrder);
+          const combinedDogs = [...prevDogs, ...response.dogs];
+          const uniqueDogs = removeDuplicates(combinedDogs);
+          return sortDogsByOrder(uniqueDogs, sortOrder);
         });
         setNext(response.next);
       })
@@ -42,22 +40,34 @@ const Search = () => {
       });
   }
 
-  // Sort dogs based on the sortOrder
+  function removeDuplicates(dogs: Dog[]): Dog[] {
+    const dogMap = new Map<string, Dog>();
+    dogs.forEach((dog) => dogMap.set(dog.id, dog));
+
+    return Array.from(dogMap.values());
+  }
+
+  function onLoadMore(breed: string): void {
+    fetchDogs([breed], next);
+  }
+
   function sortDogsByOrder(dogs: Dog[], order: 'asc' | 'desc'): Dog[] {
-    return dogs.sort((a, b) =>
+    return [...dogs].sort((a, b) =>
       order === 'asc'
         ? a.breed.localeCompare(b.breed)
         : b.breed.localeCompare(a.breed),
     );
   }
 
-  // Track breed changes
+  useEffect(() => {
+    setDogs((prevDogs) => sortDogsByOrder(prevDogs, sortOrder));
+  }, [sortOrder]);
+
   useEffect(() => {
     if (selectedBreeds.length === 0) return;
 
     setError('');
 
-    // Identify added and removed breeds
     const currentBreeds = new Set(selectedBreeds);
     const previousBreeds = new Set(dogs.map((dog) => dog.breed));
 
@@ -68,10 +78,8 @@ const Search = () => {
       (breed) => !currentBreeds.has(breed),
     );
 
-    // Fetch only new breeds
     if (addedBreeds.length > 0) fetchDogs(addedBreeds);
 
-    // Remove dogs of deselected breeds
     if (removedBreeds.length > 0) {
       setDogs((prevDogs) =>
         prevDogs.filter((dog) => currentBreeds.has(dog.breed)),
@@ -79,13 +87,12 @@ const Search = () => {
     }
   }, [selectedBreeds, sortOrder]);
 
-  // Auto-select first breed if no breed is selected
   useEffect(() => {
     if (isLoggedIn && dogs.length === 0 && selectedBreeds.length === 0) {
       DogsModel.getBreeds()
         .then((breeds) => {
           if (breeds.length > 0) {
-            setSelectedBreeds([breeds[0].name]); // Auto-select first breed
+            setSelectedBreeds([breeds[0].name]);
           }
         })
         .catch((error) => {
@@ -110,7 +117,9 @@ const Search = () => {
         </div>
       </Container>
 
-      {!error && dogs.length > 0 && <DogsGrid dogs={dogs} sort={sortOrder} />}
+      {!error && dogs.length > 0 && (
+        <DogsGrid dogs={dogs} onLoadMore={onLoadMore} />
+      )}
 
       {!error && dogs.length === 0 && (
         <div className="d-flex flex-column flex-grow-1 justify-content-center align-items-center">

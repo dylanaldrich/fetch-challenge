@@ -42,7 +42,7 @@ const NavBar = () => {
       {activeUser?.name && (
         <div className="d-flex align-items-center">
           <div className="border-end">
-            <span className="pe-2">
+            <span className="pe-3">
               <span className="d-none d-md-inline">Welcome, </span>
               {activeUser.name}
             </span>

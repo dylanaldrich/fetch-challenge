@@ -1,5 +1,7 @@
-import { FC, useState, useMemo } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 
 import './DogsGrid.scss';
 import DogsModel, { Dog } from '../../models/DogsModel';
@@ -9,28 +11,16 @@ import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 interface DogsGridProps {
   dogs: Dog[];
-  sort: 'asc' | 'desc';
+  onLoadMore: (breed: string) => void;
 }
 
-const DogsGrid: FC<DogsGridProps> = ({ dogs, sort }) => {
+const DogsGrid: FC<DogsGridProps> = ({ dogs, onLoadMore }) => {
   const [selectedDogIds, setSelectedDogIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [moreDogsLoading, setMoreDogsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [match, setMatch] = useState<Dog>();
-
-  // Ensure unique dogs and apply sorting
-  const sortedDogs = useMemo(() => {
-    const dogMap = new Map<string, Dog>();
-    dogs.forEach((dog) => dogMap.set(dog.id, dog));
-
-    const uniqueDogs = Array.from(dogMap.values());
-
-    return uniqueDogs.sort((a, b) => {
-      if (sort === 'asc') return a.name.localeCompare(b.name);
-      return b.name.localeCompare(a.name);
-    });
-  }, [dogs, sort]);
 
   function toggleSelection(id: string): void {
     setSelectedDogIds((prev) => {
@@ -71,13 +61,23 @@ const DogsGrid: FC<DogsGridProps> = ({ dogs, sort }) => {
     setShowModal(false);
   }
 
+  function getMoreDogs(): void {
+    if (dogs.length === 0) return;
+    setMoreDogsLoading(true);
+    const lastDog = dogs[dogs.length - 1];
+    onLoadMore(lastDog.breed);
+  }
+
+  useEffect(() => {
+    setMoreDogsLoading(false);
+  }, [dogs]);
+
   return (
     <>
       <Container className="mt-3 mb-5">
         <Row className="DogsGrid g-3 position-relative" data-testid="DogsGrid">
-          {sortedDogs.map((dog, index) => (
+          {dogs.map((dog) => (
             <Col xs={12} sm={6} md={4} lg={3} key={dog.id}>
-              <span>{index + 1}</span>
               <DogCard
                 dog={dog}
                 isSelected={selectedDogIds.has(dog.id)}
@@ -85,6 +85,28 @@ const DogsGrid: FC<DogsGridProps> = ({ dogs, sort }) => {
               />
             </Col>
           ))}
+          <Col xs={12} sm={6} md={4} lg={3}>
+            <Card
+              className="h-100 shadow-sm _see-more-card"
+              onClick={getMoreDogs}
+            >
+              <Card.Body className="d-flex flex-column align-items-center justify-content-center">
+                <Card.Title className="mb-3">Want more doggos?</Card.Title>
+                {!moreDogsLoading && (
+                  <FontAwesomeIcon
+                    icon={faPlusCircle}
+                    size="4x"
+                    className="text-primary"
+                  ></FontAwesomeIcon>
+                )}
+                {moreDogsLoading && (
+                  <span className="text-primary">
+                    <LoadingSpinner />
+                  </span>
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
 
           {selectedDogIds.size > 0 && (
             <Card className="w-75 text-center text-md-start border-primary shadow _selects-card">

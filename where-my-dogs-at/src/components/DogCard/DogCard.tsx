@@ -16,7 +16,7 @@ interface DogCardProps {
 const DogCard: FC<DogCardProps> = ({ dog, isSelected, toggleSelection }) => (
   <Card
     className={
-      'DogCard shadow-sm position-relative ' +
+      'DogCard shadow-sm position-relative h-100 ' +
       (isSelected ? 'border-primary' : '')
     }
     onClick={() => toggleSelection(dog.id)}

@@ -37,8 +37,10 @@ class DogsModel {
           sort: searchParams.sort || 'breed:asc',
         })
       : new URLSearchParams();
-    const path = searchParams?.next || '/dogs/search?';
-    const response = await fetch(baseUrl + path + urlSearchParams, {
+    const path = searchParams?.next
+      ? searchParams.next
+      : `/dogs/search?${urlSearchParams}`;
+    const response = await fetch(baseUrl + path, {
       method: 'GET',
       credentials: 'include',
       headers: {
