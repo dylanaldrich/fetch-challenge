@@ -40,17 +40,31 @@ const NavBar = () => {
       </Navbar.Brand>
 
       {activeUser?.name && (
-        <div className="d-flex align-items-center">
-          <div className="border-end">
-            <span className="pe-3">
-              <span className="d-none d-md-inline">Welcome, </span>
-              {activeUser.name}
-            </span>
-          </div>
-          <Button onClick={logout} className="ms-2 me-3 btn-light">
-            Logout
-          </Button>
-        </div>
+        <>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" className="me-2" />
+          <Navbar.Collapse
+            className="justify-content-end mt-2 mt-lg-0"
+            id="basic-navbar-nav"
+          >
+            <div className="d-flex align-items-center justify-content-end">
+              <div className="border-end d-none d-lg-block">
+                <span className="pe-3">
+                  <span className="d-none d-md-inline">Welcome, </span>
+                  {activeUser.name}
+                </span>
+              </div>
+              <Button
+                onClick={logout}
+                className="ms-2 me-3 btn-light d-none d-lg-block"
+              >
+                Logout
+              </Button>
+              <Button onClick={logout} className="btn-link d-block d-lg-none">
+                Logout {activeUser.name}
+              </Button>
+            </div>
+          </Navbar.Collapse>
+        </>
       )}
     </Navbar>
   );
