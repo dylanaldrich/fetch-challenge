@@ -4,6 +4,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { SetStateAction } from 'jotai';
 import { Col, Form, Row } from 'react-bootstrap';
 import { Option } from 'react-bootstrap-typeahead/types/types';
+import { useNavigate } from 'react-router-dom';
 
 import './SearchBar.scss';
 import DogsModel from '../../models/DogsModel';
@@ -16,6 +17,7 @@ export interface SearchBarProps {
 const SearchBar: FC<SearchBarProps> = ({ setSelectedBreeds, setSortOrder }) => {
   const [breeds, setBreeds] = useState<{ name: string }[]>([]);
   const [multiSelections, setMultiSelections] = useState<Option[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     DogsModel.getBreeds()
@@ -34,11 +36,20 @@ const SearchBar: FC<SearchBarProps> = ({ setSelectedBreeds, setSortOrder }) => {
       typeof option === 'string' ? option : option['name'],
     );
     setSelectedBreeds(selectedBreeds);
+    handleUrlUpdates(selectedBreeds);
   }, [multiSelections, setSelectedBreeds]);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOrder(e.target.value as 'asc' | 'desc');
   };
+
+  function handleUrlUpdates(breeds: string[]) {
+    const searchParams = DogsModel.getUrlSearchParams({ breeds });
+
+    if (searchParams) {
+      navigate(`?${searchParams.toString()}`, { replace: true });
+    }
+  }
 
   return (
     <Row className="flex-grow-1">

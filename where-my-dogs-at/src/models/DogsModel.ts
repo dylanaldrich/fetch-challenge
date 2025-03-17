@@ -48,6 +48,12 @@ class DogsModel {
       },
     });
 
+    if (response.status === 401) {
+      // redirect to home page
+      window.location.href = '/';
+      throw new Error('That action is unauthorized.');
+    }
+
     if (response.status !== 200) {
       throw new Error('Login attempt failed. Please try again.');
     }
@@ -65,6 +71,12 @@ class DogsModel {
         'Content-Type': 'application/json',
       },
     });
+
+    if (response.status === 401) {
+      // redirect to home page
+      window.location.href = '/';
+      throw new Error('That action is unauthorized.');
+    }
 
     if (response.status !== 200) {
       throw new Error(
@@ -87,6 +99,12 @@ class DogsModel {
       body: JSON.stringify(dogIds),
     });
 
+    if (response.status === 401) {
+      // redirect to home page
+      window.location.href = '/';
+      throw new Error('That action is unauthorized.');
+    }
+
     if (response.status !== 200) {
       throw new Error(
         "Couldn't fetch dogs. Ha! See what I did there? Please try again.",
@@ -107,6 +125,12 @@ class DogsModel {
       },
       body: JSON.stringify(dogIds),
     });
+
+    if (matchResponse.status === 401) {
+      // redirect to home page
+      window.location.href = '/';
+      throw new Error('That action is unauthorized.');
+    }
 
     if (matchResponse.status !== 200) {
       throw new Error(
